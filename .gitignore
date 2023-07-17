@@ -1,9 +1,14 @@
 *.RData
 World_*/*
 *.Rproj
+*.png
+*.csv
+settings.txt
+parameter_estiamtes.txt
 # History files
 .Rhistory
 .Rapp.history
+
 
 # Session Data files
 .RData
