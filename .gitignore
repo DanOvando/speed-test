@@ -5,6 +5,7 @@ World_*/*
 *.csv
 settings.txt
 parameter_estiamtes.txt
+*.pdf
 # History files
 .Rhistory
 .Rapp.history

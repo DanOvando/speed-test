@@ -12,13 +12,15 @@ check_cmdstan_toolchain(fix = TRUE, quiet = TRUE)
 library(posterior)
 library(bayesplot)
 library(here)
+library(glue)
 color_scheme_set("brightblue")
-tic()
+
+start_time <- Sys.time()
 
 # bayesian test -----------------------------------------------------------
 
 # Generate some fake data
-n <- 25000
+n <- 150000
 k <- 20
 X <- matrix(rnorm(n * k), ncol = k)
 y <- rbinom(n, size = 1, prob = plogis(3 * X[,1] - 2 * X[,2] + 1))
@@ -28,10 +30,13 @@ mod_cl <- cmdstan_model("logistic.stan")
 
 fit_cl <- mod_cl$sample(data = mdata, chains = 4, parallel_chains = 4, refresh = 100)
 
+fit_cl$time()
+
+b = Sys.time()
 model <- stan_demo(model = 516, chains = 4, cores = 4)
+gp_time = Sys.time() - b
 
-
-
+gp_time
 # mixed effects test ------------------------------------------------------
 
 # Load package
@@ -56,26 +61,34 @@ fit = fit_model( settings = settings,
                  a_i = example$sampling_data[,'AreaSwept_km2'] )
 
 # Plot results
-plot( fit )
+# plot( fit )
 
-mesh <- make_mesh(pcod, xy_cols = c("X", "Y"), cutoff = 10)
-
-d <- subset(pcod, year == 2017)
-pcod_spde <- make_mesh(d, c("X", "Y"), cutoff = 30)
-m <- sdmTMB(density ~ 0 + depth_scaled + depth_scaled2,
-            data = d, mesh = pcod_spde, family = tweedie(link = "log"))
-p <- predict(m, newdata = qcs_grid)
+# mesh <- make_mesh(pcod, xy_cols = c("X", "Y"), cutoff = 10)
+# 
+# d <- subset(pcod, year == 2017)
+# pcod_spde <- make_mesh(d, c("X", "Y"), cutoff = 30)
+# m <- sdmTMB(density ~ 0 + depth_scaled + depth_scaled2,
+#             data = d, mesh = pcod_spde, family = tweedie(link = "log"))
+# p <- predict(m, newdata = qcs_grid)
 
 
 # mapping test ------------------------------------------------------------
 
+map_start <- Sys.time()
 
 eezs <-
-  sf::read_sf(here("World_EEZ_v11_20191118_LR", "eez_v11_lowres.shp")) 
+  sf::read_sf(here("World_EEZ_v11_20191118", "eez_v11.shp")) 
 
-eezs |> 
+eez_map <- eezs |> 
   ggplot() + 
   geom_sf()
 
-toc()
+ggsave("eez_test.pdf", plot = eez_map)
 
+map_end <- Sys.time() - map_start
+
+map_end
+
+total_time <- Sys.time() - start_time
+
+total_time
