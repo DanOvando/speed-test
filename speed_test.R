@@ -20,7 +20,7 @@
   # bayesian test -----------------------------------------------------------
   
   # Generate some fake data
-  n <- 150000
+  n <- 200000
   k <- 20
   X <- matrix(rnorm(n * k), ncol = k)
   y <- rbinom(n, size = 1, prob = plogis(3 * X[,1] - 2 * X[,2] + 1))
@@ -28,7 +28,7 @@
   
   mod_cl <- cmdstan_model("logistic.stan")
   
-  fit_cl <- mod_cl$sample(data = mdata, chains = 4, parallel_chains = 4, refresh = 100)
+  fit_cl <- mod_cl$sample(data = mdata, chains = 1, parallel_chains = 1, refresh = 100)
   
   fit_cl$time()
   
@@ -84,6 +84,12 @@
   )
   sdmtmb_time <- Sys.time() - spt_time
   
+  
+  tmb_timer <- Sys.time()
+  
+  TMB::runExample(all = TRUE, clean = TRUE)
+  
+  tmb_time <- Sys.time() - tmb_timer
   
   # mapping test ------------------------------------------------------------
   
