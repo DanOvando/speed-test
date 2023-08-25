@@ -33,7 +33,8 @@
   fit_cl$time()
   
   b = Sys.time()
-  model <- stan_demo(model = 516, chains = 4, cores = 4)
+  model <- stan_demo(model = 516, chains = 4, cores = 4, sample_file = "test",
+                     diagnostic_file="test2")
   gp_time = Sys.time() - b
   
   gp_time
@@ -90,7 +91,7 @@
   TMB::runExample(all = TRUE, clean = TRUE)
   
   tmb_time <- Sys.time() - tmb_timer
-  
+  tmb_time
   # mapping test ------------------------------------------------------------
   
   map_start <- Sys.time()
